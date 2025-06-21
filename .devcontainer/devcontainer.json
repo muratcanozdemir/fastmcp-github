@@ -1,0 +1,37 @@
+{
+    "name": "MCP GitHub Server",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "ms-python.python",
+          "ms-python.vscode-pylance",
+          "esbenp.prettier-vscode",
+          "humao.rest-client"
+        ]
+      }
+    },
+    "postCreateCommand": "pip install -r requirements.txt",
+    "forwardPorts": [8000],
+    "features": {
+      "ghcr.io/devcontainers/features/git:1": {},
+      "ghcr.io/devcontainers/features/python-poetry:1": {
+        "version": "latest"
+      }
+    },
+    "remoteEnv": {
+      "PYTHONUNBUFFERED": "1"
+    },
+    "runArgs": ["--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
+    "containerEnv": {
+      "AZURE_AD_CLIENT_ID": "${{ secrets.AZURE_AD_CLIENT_ID }}",
+      "AZURE_AD_TENANT_ID": "${{ secrets.AZURE_AD_TENANT_ID }}",
+      "AZURE_AD_CLIENT_SECRET": "${{ secrets.AZURE_AD_CLIENT_SECRET }}",
+      "GITHUB_APP_ID": "${{ secrets.GITHUB_APP_ID }}",
+      "GITHUB_PRIVATE_KEY_BASE64": "${{ secrets.GITHUB_PRIVATE_KEY_BASE64 }}",
+      "GITHUB_ORGS": "${{ secrets.GITHUB_ORGS }}",
+      "JWT_SECRET": "${{ secrets.JWT_SECRET }}",
+      "AUDIT_DB_URL": "${{ secrets.AUDIT_DB_URL }}"
+    }
+  }
+  

@@ -1,0 +1,48 @@
+### Get user identity (after Azure login via browser)
+GET http://localhost:8000/me
+
+###
+
+### Perform GitHub action (replace secret)
+POST http://localhost:8000/act
+Content-Type: application/json
+
+{
+  "org": "your-org-name",
+  "repo": "your-repo-name",
+  "action": "replace_secret",
+  "parameters": {
+    "name": "SECRET_TOKEN",
+    "value": "s3cr3t-v4lu3"
+  }
+}
+
+###
+
+### View audit logs (only works if you're in mcp-auditors or owners)
+GET http://localhost:8000/audit?org=your-org-name&limit=10
+
+###
+
+### Trigger login flow (opens browser, sets session cookie)
+GET http://localhost:8000/login
+
+###
+
+### Health check (unauthenticated)
+GET http://localhost:8000/healthz
+
+###
+
+### Prometheus metrics
+GET http://localhost:8000/metrics
+
+###
+
+### Root landing
+GET http://localhost:8000/
+
+###
+
+### OpenAPI JSON
+GET http://localhost:8000/openapi.json

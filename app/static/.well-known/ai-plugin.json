@@ -1,0 +1,19 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "MCP GitHub Controller",
+    "name_for_model": "mcp_github_tool",
+    "description_for_human": "Manage GitHub orgs, teams, secrets, and repos using natural language.",
+    "description_for_model": "Tool for managing GitHub actions like creating repos, adding team members, or rotating secrets.",
+    "auth": {
+      "type": "none"
+    },
+    "api": {
+      "type": "openapi",
+      "url": "https://your-mcp-host/openapi.json",
+      "has_user_authentication": true
+    },
+    "logo_url": "https://your-mcp-host/logo.png",
+    "contact_email": "devops@example.com",
+    "legal_info_url": "https://your-company.com/legal"
+  }
+  

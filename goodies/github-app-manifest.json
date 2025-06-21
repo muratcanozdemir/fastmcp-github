@@ -1,0 +1,33 @@
+{
+    "name": "MCP GitHub Automation",
+    "description": "Secure GitHub automation via GitHub App + Azure AD + FastMCP",
+    "url": "https://your-mcp-host", 
+    "redirect_url": "https://your-mcp-host/auth/callback",
+    "public": false,
+    "default_permissions": {
+      "administration": "read",
+      "members": "read",
+      "organization_administration": "read",
+      "metadata": "read",
+      "contents": "read",
+      "issues": "write",
+      "actions": "write",
+      "secrets": "write",
+      "memberships": "write"
+    },
+    "default_events": [
+      "organization",
+      "repository",
+      "membership"
+    ],
+    "webhook_secret": "REPLACE_WITH_SECURE_RANDOM",
+    "setup_url": "https://your-mcp-host/login",
+    "setup_on_update": true,
+    "callback_urls": [
+      "https://your-mcp-host/auth/callback"
+    ],
+    "hook_attributes": {
+      "url": "https://your-mcp-host/github/webhook"
+    }
+  }
+  

@@ -1,0 +1,23 @@
+[project]
+name = "mcp-github-server"
+version = "0.1.0"
+description = "GitHub App control plane with Azure AD login and FastAPI interface"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "httpx",
+  "pytest-asyncio",
+  "respx",
+  "pytest-cov"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
