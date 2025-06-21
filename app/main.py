@@ -2,13 +2,13 @@ from fastapi import FastAPI, Request, Depends, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastmcp import MCPHandler, register_action
+from fastmcp import FastMCP
 
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST, Counter, Histogram
-from slowapi import Limiter, _rate_limiter_exempt
+from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-from slowapi.decorator import limiter
+from slowapi.middleware import SlowAPIMiddleware
 from fastapi.responses import PlainTextResponse
 
 from typing import Optional, List
@@ -34,21 +34,11 @@ app = FastAPI(
 REQUEST_COUNT = Counter("mcp_requests_total", "Total MCP requests", ["method", "endpoint"])
 REQUEST_LATENCY = Histogram("mcp_request_latency_seconds", "Request latency", ["endpoint"])
 
-limiter = Limiter(key_func=get_rate_limit_key)
-
-def get_rate_limit_key(request: Request) -> str:
-    token = request.cookies.get("session")
-    if not token:
-        return get_remote_address(request)
-    try:
-        user = decode_jwt_token(token)
-        return user.get("email", get_remote_address(request))
-    except JWTError:
-        return get_remote_address(request)
-
+limiter = Limiter(key_func=get_remote_address)
 
 app.mount("/.well-known", StaticFiles(directory="app/static/.well-known"), name="well-known")
 app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
 app.add_exception_handler(RateLimitExceeded, lambda request, exc: PlainTextResponse("Too Many Requests", status_code=429))
 
 
@@ -62,6 +52,7 @@ def metrics():
     return PlainTextResponse(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 @app.get("/healthz", tags=["meta"], summary="Basic health check", include_in_schema=True)
+@limiter.exempt
 def healthz():
     return {"status": "ok"}
 
@@ -98,8 +89,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-mcp = MCPHandler(app)
+mcp = FastMCP("MCP GitHub Server")
 
+@mcp.tool()
 @app.get("/", tags=["meta"], summary="Landing page for the MCP Server")
 async def root():
     return {
@@ -111,12 +103,7 @@ async def root():
     }
 
 @app.post("/act")
-@register_action(
-    name="github/act",
-    tags=["github"],
-    summary="Perform GitHub action on behalf of user",
-    permissions=["write"]
-)
+@mcp.tool(name="github.act", description="Perform GitHub action via MCP")
 @limiter("5/minute")
 async def act_on_github(
     request: Request,
